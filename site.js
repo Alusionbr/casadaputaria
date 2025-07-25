@@ -27,10 +27,25 @@ function inicializarSite(){
   const cats = [...new Set(gifs.map(g=>g.categoria))].sort();
   const ul = document.getElementById('categorias');
   ul.innerHTML='';
+
+  const todas=document.createElement('li');
+  todas.textContent='Todas';
+  todas.classList.add('selected');
+  todas.onclick=()=>{
+    document.querySelectorAll('#categorias li').forEach(x=>x.classList.remove('selected'));
+    todas.classList.add('selected');
+    renderGifs(gifs);
+  };
+  ul.appendChild(todas);
+
   cats.forEach(cat=>{
     const li=document.createElement('li');
     li.textContent=cat;
-    li.onclick=()=>{document.querySelectorAll('#categorias li').forEach(x=>x.classList.remove('selected'));li.classList.add('selected');renderGifs(gifs.filter(g=>g.categoria===cat));};
+    li.onclick=()=>{
+      document.querySelectorAll('#categorias li').forEach(x=>x.classList.remove('selected'));
+      li.classList.add('selected');
+      renderGifs(gifs.filter(g=>g.categoria===cat));
+    };
     ul.appendChild(li);
   });
   renderGifs(gifs);
