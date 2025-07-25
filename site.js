@@ -4,8 +4,24 @@ const ARQUIVO_TXT = 'acervo.txt';
 let gifs = [];
 
 window.addEventListener('DOMContentLoaded', () => {
+  verificarIdade();
   carregarAcervo();
 });
+
+function verificarIdade(){
+  const aceito = localStorage.getItem('idadeOk');
+  const popup = document.getElementById('age-popup');
+  if(aceito){
+    popup.style.display = 'none';
+  }else{
+    popup.style.display = 'flex';
+  }
+}
+
+function aceitarIdade(){
+  localStorage.setItem('idadeOk','sim');
+  document.getElementById('age-popup').style.display = 'none';
+}
 
 async function carregarAcervo(){
   try{
@@ -68,3 +84,4 @@ function buscarGifs(){
 function copiarLink(url,btn){
   navigator.clipboard.writeText(url).then(()=>{btn.textContent='Copiado!';setTimeout(()=>btn.textContent='Copiar link',1500);});
 }
+
