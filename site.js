@@ -29,9 +29,13 @@ function inicializarSite(){
   const catUl=document.getElementById('categorias');
   catUl.innerHTML='';
   const todas=document.createElement('li');
-  todas.textContent='Todas';
+  const todasA=document.createElement('a');
+  todasA.href='#';
+  todasA.textContent='Todas';
+  todas.appendChild(todasA);
   todas.classList.add('selected');
-  todas.onclick=()=>{
+  todasA.onclick=(e)=>{
+    e.preventDefault();
     document.querySelectorAll('#categorias li').forEach(x=>x.classList.remove('selected'));
     document.querySelectorAll('#subcategorias li').forEach(x=>x.classList.remove('selected'));
     todas.classList.add('selected');
@@ -45,8 +49,12 @@ function inicializarSite(){
   const cats=[...new Set(gifs.map(g=>g.categoria))].sort();
   cats.forEach(cat=>{
     const li=document.createElement('li');
-    li.textContent=cat;
-    li.onclick=()=>{
+    const a=document.createElement('a');
+    a.href='#';
+    a.textContent=cat;
+    li.appendChild(a);
+    a.onclick=(e)=>{
+      e.preventDefault();
       document.querySelectorAll('#categorias li').forEach(x=>x.classList.remove('selected'));
       li.classList.add('selected');
       selectedCategoria=cat;
@@ -66,9 +74,13 @@ function renderSubcategorias(cat){
   if(!cat){return;}
   const subs=[...new Set(gifs.filter(g=>g.categoria===cat).map(g=>g.subcategoria))].sort();
   const todas=document.createElement('li');
-  todas.textContent='Todas';
+  const todasA=document.createElement('a');
+  todasA.href='#';
+  todasA.textContent='Todas';
+  todas.appendChild(todasA);
   todas.classList.add('selected');
-  todas.onclick=()=>{
+  todasA.onclick=(e)=>{
+    e.preventDefault();
     document.querySelectorAll('#subcategorias li').forEach(x=>x.classList.remove('selected'));
     todas.classList.add('selected');
     selectedSubcategoria=null;
@@ -77,8 +89,12 @@ function renderSubcategorias(cat){
   subUl.appendChild(todas);
   subs.forEach(sub=>{
     const li=document.createElement('li');
-    li.textContent=sub;
-    li.onclick=()=>{
+    const a=document.createElement('a');
+    a.href='#';
+    a.textContent=sub;
+    li.appendChild(a);
+    a.onclick=(e)=>{
+      e.preventDefault();
       document.querySelectorAll('#subcategorias li').forEach(x=>x.classList.remove('selected'));
       li.classList.add('selected');
       selectedSubcategoria=sub;
