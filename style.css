@@ -28,6 +28,10 @@ nav ul {
   justify-content: center;
 }
 
+#subcategorias {
+  margin-top: 6px;
+}
+
 nav li {
   margin: 4px;
   padding: 6px 10px;
@@ -64,6 +68,7 @@ nav li.selected {
 
 .gif-title,
 .gif-categoria,
+.gif-subcategoria,
 .gif-tags {
   margin-top: 5px;
   font-size: 14px;

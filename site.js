@@ -2,6 +2,8 @@
 /* site.js – carrega acervo.txt, gera categorias, busca e grid */
 const ARQUIVO_TXT = 'acervo.txt';
 let gifs = [];
+let selectedCategoria = null;
+let selectedSubcategoria = null;
 
 window.addEventListener('DOMContentLoaded', () => {
   carregarAcervo();
@@ -13,8 +15,8 @@ async function carregarAcervo(){
     if(!resp.ok) throw new Error('Erro ao buscar acervo');
     const txt = await resp.text();
     gifs = txt.trim().split('\n').filter(l=>l).map(l=>{
-      const [title,src,categoria,tagsStr,fonte] = l.split('|').map(s=>s.trim());
-      return {title,src,categoria,tags:tagsStr.split(',').map(t=>t.trim()),fonte};
+      const [title,src,categoria,subcategoria,tagsStr,fonte] = l.split('|').map(s=>s.trim());
+      return {title,src,categoria,subcategoria,tags:tagsStr.split(',').map(t=>t.trim()),fonte};
     });
     inicializarSite();
   }catch(e){
@@ -24,31 +26,66 @@ async function carregarAcervo(){
 }
 
 function inicializarSite(){
-  const cats = [...new Set(gifs.map(g=>g.categoria))].sort();
-  const ul = document.getElementById('categorias');
-  ul.innerHTML='';
-
+  const catUl=document.getElementById('categorias');
+  catUl.innerHTML='';
   const todas=document.createElement('li');
   todas.textContent='Todas';
   todas.classList.add('selected');
   todas.onclick=()=>{
     document.querySelectorAll('#categorias li').forEach(x=>x.classList.remove('selected'));
+    document.querySelectorAll('#subcategorias li').forEach(x=>x.classList.remove('selected'));
     todas.classList.add('selected');
-    renderGifs(gifs);
+    selectedCategoria=null;
+    selectedSubcategoria=null;
+    renderSubcategorias();
+    buscarGifs();
   };
-  ul.appendChild(todas);
+  catUl.appendChild(todas);
 
+  const cats=[...new Set(gifs.map(g=>g.categoria))].sort();
   cats.forEach(cat=>{
     const li=document.createElement('li');
     li.textContent=cat;
     li.onclick=()=>{
       document.querySelectorAll('#categorias li').forEach(x=>x.classList.remove('selected'));
       li.classList.add('selected');
-      renderGifs(gifs.filter(g=>g.categoria===cat));
+      selectedCategoria=cat;
+      selectedSubcategoria=null;
+      renderSubcategorias(cat);
+      buscarGifs();
     };
-    ul.appendChild(li);
+    catUl.appendChild(li);
   });
-  renderGifs(gifs);
+  renderSubcategorias();
+  buscarGifs();
+}
+
+function renderSubcategorias(cat){
+  const subUl=document.getElementById('subcategorias');
+  subUl.innerHTML='';
+  if(!cat){return;}
+  const subs=[...new Set(gifs.filter(g=>g.categoria===cat).map(g=>g.subcategoria))].sort();
+  const todas=document.createElement('li');
+  todas.textContent='Todas';
+  todas.classList.add('selected');
+  todas.onclick=()=>{
+    document.querySelectorAll('#subcategorias li').forEach(x=>x.classList.remove('selected'));
+    todas.classList.add('selected');
+    selectedSubcategoria=null;
+    buscarGifs();
+  };
+  subUl.appendChild(todas);
+  subs.forEach(sub=>{
+    const li=document.createElement('li');
+    li.textContent=sub;
+    li.onclick=()=>{
+      document.querySelectorAll('#subcategorias li').forEach(x=>x.classList.remove('selected'));
+      li.classList.add('selected');
+      selectedSubcategoria=sub;
+      buscarGifs();
+    };
+    subUl.appendChild(li);
+  });
 }
 
 function renderGifs(lista){
@@ -62,20 +99,22 @@ function renderGifs(lista){
     const vid=document.createElement('video');vid.src=g.src;vid.autoplay=true;vid.loop=true;vid.muted=true;vid.playsInline=true;
     const title=document.createElement('div');title.className='gif-title';title.textContent=g.title;
     const cat=document.createElement('div');cat.className='gif-categoria';cat.textContent=g.categoria;
+    const sub=document.createElement('div');sub.className='gif-subcategoria';sub.textContent=g.subcategoria;
     const tags=document.createElement('div');tags.className='gif-tags';tags.textContent=g.tags.join(', ');
     const fonte=document.createElement('a');fonte.className='gif-fonte';fonte.href=g.fonte;fonte.target='_blank';fonte.rel='noopener';fonte.textContent='Ver na fonte';
     const btns=document.createElement('div');btns.className='gif-btns';
     const copy=document.createElement('button');copy.textContent='Copiar link';copy.onclick=()=>copiarLink(g.src,copy);
     btns.appendChild(copy);
-    card.append(vid,title,cat,tags,fonte,btns);
+    card.append(vid,title,cat,sub,tags,fonte,btns);
     grid.appendChild(card);
   });
 }
 
 function buscarGifs(){
   const termo=document.getElementById('busca').value.trim().toLowerCase();
-  const selected=document.querySelector('#categorias .selected');
-  let base=selected?gifs.filter(g=>g.categoria===selected.textContent):gifs;
+  let base=gifs;
+  if(selectedCategoria) base=base.filter(g=>g.categoria===selectedCategoria);
+  if(selectedSubcategoria) base=base.filter(g=>g.subcategoria===selectedSubcategoria);
   if(!termo){renderGifs(base);return;}
   renderGifs(base.filter(g=>g.title.toLowerCase().includes(termo)||g.tags.some(t=>t.toLowerCase().includes(termo))));
 }
