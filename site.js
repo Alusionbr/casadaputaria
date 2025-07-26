@@ -1,6 +1,13 @@
 
 /* site.js – carrega acervo.txt, gera categorias, busca e grid */
 const ARQUIVO_TXT = 'acervo.txt';
+const ACERVO_EMBED = `
+Morena goza forte | https://thumbs4.redgifs.com/FamousIdealisticGarp-mobile.mp4 | Amadoras | Morenas | morena,sentando,gozo | https://redgifs.com/watch/famousidealisticgarp
+Loira milf cavalgando | https://thumbs4.redgifs.com/BriefMildIchneumonfly-mobile.mp4 | MILF | Loiras | loira,cavalgando,madura | https://redgifs.com/watch/briefmildichneumonfly
+Magrinha dando a buceta | https://casadastop.net/wp-content/uploads/2023/10/magrinha-dando-a-buceta-01.webp | Magrinhas | Magrinhas | magrinha,fodendo | https://casadastop.net/
+Magrinha dando a buceta 02 | https://casadastop.net/wp-content/uploads/2023/10/magrinha-dando-a-buceta-02.webp | Magrinhas | Magrinhas | magrinha,fodendo | https://casadastop.net/
+Magrinha dando a buceta 03 | https://casadastop.net/wp-content/uploads/2023/10/magrinha-dando-a-buceta-03.webp | Magrinhas | Magrinhas | magrinha,fodendo | https://casadastop.net/
+Magrinha dando a buceta 04 | https://casadastop.net/wp-content/uploads/2023/10/magrinha-dando-a-buceta-04.webp | Magrinhas | Magrinhas | magrinha,fodendo | https://casadastop.net/`;
 let gifs = [];
 let selectedCategoria = null;
 let selectedSubcategoria = null;
@@ -14,15 +21,19 @@ async function carregarAcervo(){
     const resp = await fetch(ARQUIVO_TXT);
     if(!resp.ok) throw new Error('Erro ao buscar acervo');
     const txt = await resp.text();
-    gifs = txt.trim().split('\n').filter(l=>l).map(l=>{
-      const [title,src,categoria,subcategoria,tagsStr,fonte] = l.split('|').map(s=>s.trim());
-      return {title,src,categoria,subcategoria,tags:tagsStr.split(',').map(t=>t.trim()),fonte};
-    });
-    inicializarSite();
+    processarAcervo(txt);
   }catch(e){
-    console.error(e);
-    document.getElementById('gifs-grid').innerHTML='<p style="color:#f66">Falha ao carregar acervo</p>';
+    console.error('Falha ao buscar acervo.txt, usando ACERVO_EMBED', e);
+    processarAcervo(ACERVO_EMBED);
   }
+}
+
+function processarAcervo(txt){
+  gifs = txt.trim().split('\n').filter(l=>l).map(l=>{
+    const [title,src,categoria,subcategoria,tagsStr,fonte] = l.split('|').map(s=>s.trim());
+    return {title,src,categoria,subcategoria,tags:tagsStr.split(',').map(t=>t.trim()),fonte};
+  });
+  inicializarSite();
 }
 
 function inicializarSite(){
@@ -96,7 +107,15 @@ function renderGifs(lista){
   nada.style.display='none';
   lista.forEach(g=>{
     const card=document.createElement('div');card.className='gif-card';
-    const vid=document.createElement('video');vid.src=g.src;vid.autoplay=true;vid.loop=true;vid.muted=true;vid.playsInline=true;
+    let media;
+    if(/\.(mp4|webm)$/i.test(g.src)){
+      media=document.createElement('video');
+      media.src=g.src;
+      media.autoplay=true;media.loop=true;media.muted=true;media.playsInline=true;
+    }else{
+      media=document.createElement('img');
+      media.src=g.src;
+    }
     const title=document.createElement('div');title.className='gif-title';title.textContent=g.title;
     const cat=document.createElement('div');cat.className='gif-categoria';cat.textContent=g.categoria;
     const sub=document.createElement('div');sub.className='gif-subcategoria';sub.textContent=g.subcategoria;
@@ -105,7 +124,7 @@ function renderGifs(lista){
     const btns=document.createElement('div');btns.className='gif-btns';
     const copy=document.createElement('button');copy.textContent='Copiar link';copy.onclick=()=>copiarLink(g.src,copy);
     btns.appendChild(copy);
-    card.append(vid,title,cat,sub,tags,fonte,btns);
+    card.append(media,title,cat,sub,tags,fonte,btns);
     grid.appendChild(card);
   });
 }

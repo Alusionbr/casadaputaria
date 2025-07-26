@@ -11,6 +11,7 @@ header {
   background: #111;
 }
 
+
 #busca {
   padding: 6px 8px;
   border-radius: 4px;
@@ -58,10 +59,14 @@ nav li.selected {
   padding: 10px;
   border: 1px solid #333;
   border-radius: 6px;
-  width: 200px;
+  width: 260px;
 }
 
 .gif-card video {
+  width: 100%;
+  border-radius: 4px;
+}
+.gif-card img {
   width: 100%;
   border-radius: 4px;
 }
