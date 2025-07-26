@@ -65,6 +65,10 @@ nav li.selected {
   width: 100%;
   border-radius: 4px;
 }
+.gif-card img {
+  width: 100%;
+  border-radius: 4px;
+}
 
 .gif-title,
 .gif-categoria,
