@@ -3,6 +3,7 @@ body {
   color: #fff;
   font-family: Arial, sans-serif;
   margin: 0;
+  display: flex;
 }
 
 header {
@@ -110,4 +111,51 @@ footer {
   background: #222;
   padding: 20px;
   border-radius: 8px;
+}
+
+/* Layout com sidebar fixa */
+.sidebar {
+  width: 220px;
+  background: #222;
+  color: #fff;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sidebar li {
+  padding: 8px 4px;
+  cursor: pointer;
+}
+.sidebar li:hover {
+  background: #333;
+}
+.sidebar .sub {
+  display: none;
+  padding-left: 15px;
+}
+.sidebar .has-sub:hover .sub {
+  display: block;
+}
+
+.main-content {
+  margin-left: 220px;
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    width: 180px;
+  }
+  .main-content {
+    margin-left: 180px;
+  }
 }
