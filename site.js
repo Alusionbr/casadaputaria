@@ -96,7 +96,15 @@ function renderGifs(lista){
   nada.style.display='none';
   lista.forEach(g=>{
     const card=document.createElement('div');card.className='gif-card';
-    const vid=document.createElement('video');vid.src=g.src;vid.autoplay=true;vid.loop=true;vid.muted=true;vid.playsInline=true;
+    let media;
+    if(/\.(mp4|webm)$/i.test(g.src)){
+      media=document.createElement('video');
+      media.src=g.src;
+      media.autoplay=true;media.loop=true;media.muted=true;media.playsInline=true;
+    }else{
+      media=document.createElement('img');
+      media.src=g.src;
+    }
     const title=document.createElement('div');title.className='gif-title';title.textContent=g.title;
     const cat=document.createElement('div');cat.className='gif-categoria';cat.textContent=g.categoria;
     const sub=document.createElement('div');sub.className='gif-subcategoria';sub.textContent=g.subcategoria;
@@ -105,7 +113,7 @@ function renderGifs(lista){
     const btns=document.createElement('div');btns.className='gif-btns';
     const copy=document.createElement('button');copy.textContent='Copiar link';copy.onclick=()=>copiarLink(g.src,copy);
     btns.appendChild(copy);
-    card.append(vid,title,cat,sub,tags,fonte,btns);
+    card.append(media,title,cat,sub,tags,fonte,btns);
     grid.appendChild(card);
   });
 }
