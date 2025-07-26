@@ -39,7 +39,39 @@ function inicializarSite(){
   if(h1 && selectedCategoria){
     h1.textContent = 'Casa da Putaria – ' + selectedCategoria;
   }
-  buscarGifs();
+  if(!selectedCategoria){
+    mostrarMaisAcessados();
+  }else{
+    buscarGifs();
+  }
+}
+
+function registrarAcesso(src){
+  const key = 'view:' + src;
+  const atual = parseInt(localStorage.getItem(key) || '0', 10);
+  localStorage.setItem(key, atual + 1);
+}
+
+function obterMaisAcessados(limite=10){
+  const contagens = Object.keys(localStorage)
+    .filter(k => k.startsWith('view:'))
+    .map(k => [k.slice(5), parseInt(localStorage.getItem(k) || '0', 10)]);
+  contagens.sort((a,b) => b[1] - a[1]);
+  return contagens.slice(0, limite)
+    .map(([src]) => gifs.find(g => g.src === src))
+    .filter(Boolean);
+}
+
+function mostrarMaisAcessados(){
+  const titulo = document.getElementById('mais-title');
+  const lista = obterMaisAcessados();
+  if(lista.length){
+    if(titulo) titulo.style.display = 'block';
+    renderGifs(lista);
+  }else{
+    if(titulo) titulo.style.display = 'none';
+    buscarGifs();
+  }
 }
 
 function renderSubcategorias(cat){
@@ -102,6 +134,7 @@ function renderGifs(lista){
     const copy=document.createElement('button');copy.textContent='Copiar link';copy.onclick=()=>copiarLink(g.src,copy);
     btns.appendChild(copy);
     card.append(media,title,cat,sub,tags,fonte,btns);
+    media.addEventListener('click',()=>registrarAcesso(g.src));
     grid.appendChild(card);
   });
 }
