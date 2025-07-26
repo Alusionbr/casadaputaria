@@ -5,6 +5,15 @@ let gifs = [];
 let selectedCategoria = null;
 let selectedSubcategoria = null;
 
+// Le parametros da URL para filtrar categorias e subcategorias
+const params = new URLSearchParams(window.location.search);
+if(params.has('categoria')){
+  selectedCategoria = params.get('categoria');
+}
+if(params.has('subcategoria')){
+  selectedSubcategoria = params.get('subcategoria');
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   carregarAcervo();
 });
@@ -26,7 +35,10 @@ async function carregarAcervo(){
 }
 
 function inicializarSite(){
-  // Com a nova sidebar estática, apenas renderizamos todos os GIFs
+  const h1 = document.getElementById('titulo-categoria');
+  if(h1 && selectedCategoria){
+    h1.textContent = 'Casa da Putaria – ' + selectedCategoria;
+  }
   buscarGifs();
 }
 
@@ -64,7 +76,13 @@ function renderGifs(lista){
   grid.innerHTML='';
   if(!lista.length){nada.style.display='block';return;}
   nada.style.display='none';
-  lista.forEach(g=>{
+  lista.forEach((g,idx)=>{
+    if(idx>0 && idx%10===0){
+      const ad=document.createElement('div');
+      ad.className='ad-placeholder';
+      ad.textContent='Espaço para anúncio';
+      grid.appendChild(ad);
+    }
     const card=document.createElement('div');card.className='gif-card';
     let media;
     if(/\.(mp4|webm)$/i.test(g.src)){
