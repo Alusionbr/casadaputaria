@@ -142,8 +142,12 @@ function renderGifs(lista){
 function buscarGifs(){
   const termo=document.getElementById('busca').value.trim().toLowerCase();
   let base=gifs;
-  if(selectedCategoria) base=base.filter(g=>g.categoria===selectedCategoria);
-  if(selectedSubcategoria) base=base.filter(g=>g.subcategoria===selectedSubcategoria);
+  if(selectedCategoria)
+    base = base.filter(g =>
+      g.categoria && g.categoria.toLowerCase() === selectedCategoria.toLowerCase());
+  if(selectedSubcategoria)
+    base = base.filter(g =>
+      g.subcategoria && g.subcategoria.toLowerCase() === selectedSubcategoria.toLowerCase());
   if(!termo){renderGifs(base);return;}
   renderGifs(base.filter(g=>g.title.toLowerCase().includes(termo)||g.tags.some(t=>t.toLowerCase().includes(termo))));
 }
