@@ -12,10 +12,24 @@ async function carregarAcervo(){
     const resp = await fetch(ARQUIVO_TXT);
     if(!resp.ok) throw new Error('Erro ao buscar acervo');
     const txt = await resp.text();
-    gifs = txt.trim().split('\n').filter(l=>l).map(l=>{
-      const [title,src,categoria,tagsStr,fonte] = l.split('|').map(s=>s.trim());
-      return {title,src,categoria,tags:tagsStr.split(',').map(t=>t.trim()),fonte};
-    });
+    gifs = txt.trim().split('\n')
+      .filter(l => l)
+      .map(l => {
+        const parts = l.split('|').map(s => s.trim());
+        if (parts.length < 5) {
+          console.warn('Linha inválida no acervo:', l);
+          return null;
+        }
+        const [title, src, categoria, tagsStr, fonte] = parts;
+        return {
+          title,
+          src,
+          categoria,
+          tags: tagsStr.split(',').map(t => t.trim()),
+          fonte
+        };
+      })
+      .filter(Boolean);
     inicializarSite();
   }catch(e){
     console.error(e);
