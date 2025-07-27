@@ -1,4 +1,4 @@
-# casadaputaria
+# portaldosgifs
 
 Repositório com o código-fonte do site. Uma pasta chamada
 `gif/` está incluída para armazenar clipes ou GIFs. Ela contém um
