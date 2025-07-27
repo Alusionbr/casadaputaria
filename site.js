@@ -37,7 +37,7 @@ async function carregarAcervo(){
 function inicializarSite(){
   const h1 = document.getElementById("titulo-categoria");
   if(h1 && selectedCategoria){
-    h1.textContent = "Casa da Putaria – " + selectedCategoria;
+    h1.textContent = "Portal dos GIFs – " + selectedCategoria;
   }
   if(selectedCategoria){
     buscarGifs();
